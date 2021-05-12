@@ -1,0 +1,347 @@
+$easing: cubic-bezier(.5, 0, .5, 1);
+
+*, *:before, *:after {
+    transition: all .5s $easing;
+    transition-property: transform, opacity, background-color, border-color;
+    transition-delay: 0s;
+}
+
+#app {
+&:after {
+     content: attr(data-state);
+     position: absolute;
+     top: 100%;
+     margin-top: 1rem;
+     font-size: 5vmin;
+     background: rgba(black, 0.5);
+     color: white;
+     padding: 2vmin 5vmin;
+     border-radius: 5vmin;
+ }
+}
+
+[data-show] {
+    opacity: 0;
+
+&[data-active] {
+     opacity: 1;
+ }
+}
+
+[data-state~="idle"] {
+    animation: reset 1s $easing both;
+.ui-icon {
+    --bg: #E3E6F9;
+    --color: var(--color-primary);
+}
+
+.ui-password {
+&:before {
+     background-color: var(--color-primary);
+     transform: translateX(-100%);
+ }
+
+&:focus-within:before {
+     transform: none;
+ }
+}
+}
+
+[data-state~="validating"] {
+.ui-icon {
+    --bg: #E3E6F9;
+    --color: var(--color-primary);
+}
+.ui-password {
+&:before {
+     transform-origin: left center;
+     background-color: var(--color-primary);
+     animation: password-validating 1s infinite;
+ }
+}
+.ui-submit {
+    opacity: .5;
+    pointer-events: none;
+}
+}
+
+[data-state~="idle.error"] {
+.ui-icon {
+    background-color: #FAD0D8;
+    --color: var(--color-error);
+    animation: icon-error 1s cubic-bezier(.5, 0, .5, 1) both;
+}
+.ui-password {
+&:before {
+     animation: slide-right .5s $easing both;
+     background-color: #E2294E;
+ }
+}
+}
+
+[data-state~="success"] {
+.ui-icon {
+    --bg: var(--color-success);
+    --color: var(--color-success);
+
+&:before {
+     animation: icon-bg-success .5s ease-out both;
+ }
+}
+.ui-password {
+&:before {
+     animation: slide-right .5s $easing both;
+     background-color: var(--color-success);
+ }
+}
+}
+
+[data-state]:not([data-state~="idle"]) {
+.ui-password-input {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+.ui-submit {
+    opacity: 0.5;
+}
+}
+
+@keyframes password-validating {
+    from {
+        transform: translateX(-100%) scaleX(.5);
+    }
+    to {
+        transform: translateX(100%) scaleX(.5);
+    }
+}
+
+@keyframes slide-right {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: none;
+    }
+}
+
+@keyframes icon-error {
+    from, 85%, to {
+        transform: none;
+    }
+    20%, 50% {
+        transform-origin: right center;
+        transform: translateX(-30%) scaleX(1.1);
+    }
+    35%, 65% {
+        transform-origin: left center;
+        transform: translateX(30%) scaleX(1.1);
+    }
+}
+
+@keyframes icon-bg-success {
+    from {
+        transform: scale(1);
+        opacity: .5;
+    }
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+.ui-modal {
+    --color-primary: #5A52FF;
+    --color-error: #E0294C;
+    --color-success: #0DBE65;
+    background-color: #fff;
+    padding: 2rem 4rem;
+    border-radius: .5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    box-shadow: 0 1rem 2rem rgba(black, 0.1)
+}
+
+.ui-icon {
+    height: 3rem;
+    width: 3rem;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+
+&:before {
+     content: '';
+     position: absolute;
+     display: block;
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     border-radius: inherit;
+     background: var(--bg);
+     will-change: transform;
+ }
+
+> .ui-lock {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+&:before, &:after {
+               content: '';
+               position: absolute;
+           }
+
+&:after {
+     background-color: var(--color);
+     height: 25%;
+     width: 45%;
+     transform: translateY(50%);
+     border-radius: 2px;
+ }
+
+&:before {
+     width: 30%;
+     height: 50%;
+     border-radius: 1rem;
+     border: 4px solid var(--color);
+ }
+}
+}
+
+.ui-title {
+    font-size: 1rem;
+    line-height: 2rem;
+}
+
+.ui-subtitle {
+    font-size: .75rem;
+    height: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #9A9CA2;
+
+> span {
+    line-height: 1rem;
+    position: absolute;
+    white-space: nowrap;
+
+&.ui-error {
+     font-weight: bold;
+     color: var(--color-error);
+ }
+}
+}
+
+.ui-password {
+    appearance: none;
+    background: none;
+    border: none;
+    padding-bottom: 2px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+
+&:before, &:after {
+               content: '';
+               position: absolute;
+               height: 2px;
+               width: 100%;
+               bottom: 0;
+               left: 0;
+               z-index: 1;
+           }
+
+&:after {
+     background-color: #E8E9F0;
+     z-index: 0;
+ }
+}
+
+.ui-password-input {
+    appearance: none;
+    background: none;
+    border: none;
+    height: 2rem;
+    width: 15rem;
+
+&:focus {
+     outline: none;
+ }
+}
+
+.ui-submit {
+    appearance: none;
+    padding: 0 1.5rem;
+    height: 2rem;
+    border-radius: .5rem;
+    font-size: 0.75rem;
+    color: white;
+    background-color: var(--color-primary);
+
+&:active {
+     transform: scale(0.9);
+     transition-duration: .2s;
+ }
+
+&:focus {
+     outline: none;
+ }
+}
+
+.ui-link {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.ui-reset {
+    appearance: none;
+    background: none;
+    border: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1rem;
+
+&:before {
+     content: 'ｘ';
+     color: #AAAFBD;
+     font-weight: bold;
+     font-size: 1.5rem;
+ }
+
+&:focus {
+     outline: none;
+ }
+}
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #CED0E0;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+}
+
+*, *:before, *:after {
+    box-sizing: border-box;
+    position: relative;
+}

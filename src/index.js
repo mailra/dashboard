@@ -1,37 +1,89 @@
-/*!
-
-=========================================================
-* Material Dashboard React - v1.10.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/material-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-import React from "react";
+import React, { createContext, useContext, useState } from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import {
+    BrowserRouter as Router,
+    Route,
+    Redirect,
+    Switch,
+    Link,
+    useHistory,
+} from "react-router-dom";
 
 // core components
-import Admin from "layouts/Admin.js";
-import RTL from "layouts/RTL.js";
 
 import "assets/css/material-dashboard-react.css?v=1.10.0";
+import Admin from "./layouts/Admin";
+import Login from "./components/Login";
 
-ReactDOM.render(
-  <BrowserRouter>
-    <Switch>
-      <Route path="/admin" component={Admin} />
-      <Route path="/rtl" component={RTL} />
-      <Redirect from="/" to="/admin/dashboard" />
-    </Switch>
-  </BrowserRouter>,
-  document.getElementById("root")
-);
+export const UserContext = createContext(false);
+
+export const SecretRoute = () => {
+    const { auth, setAuth } = useContext(UserContext);
+    let history = useHistory();
+
+    const logoutHandler = () => {
+        setAuth(false);
+        history.push("/login");
+    };
+
+    return (
+        <Admin></Admin>
+    );
+};
+
+export const page404 = () => {
+    return <div>404</div>;
+};
+
+const PrivateRoute = ({ children, ...rest }) => {
+    const { auth, setAuth } = useContext(UserContext);
+
+    const isAuth = () => {
+        const token = localStorage.getItem("userToken");
+        if (token === "super-secret-token") {
+            setAuth(true);
+        }
+    };
+
+    isAuth();
+
+    return (
+        <Route
+            {...rest} //ayıklamak için
+            render={({ location }) =>
+                auth ? (
+                    children
+                ) : (
+                    <Redirect
+                        to={{
+                            pathname: "/login",
+                            state: { from: location },
+                        }}
+                    />
+                )
+            }
+        />
+    );
+};
+
+export const App = () => {
+    const [auth, setAuth] = useState(false);
+
+    return (
+        <UserContext.Provider value={{ auth, setAuth }}>
+            <Router>
+                <Switch>
+                    <PrivateRoute path="/admin">
+                        <SecretRoute />
+                    </PrivateRoute>
+                    <Route path="/login" exact component={Login} />
+                    <Route path="/" component={Login} />
+
+                    <Redirect from="/" to="/login" />
+                </Switch>
+            </Router>
+        </UserContext.Provider>
+    );
+};
+
+ReactDOM.render(<App />, document.getElementById("root"));
